@@ -122,3 +122,10 @@ Fork 這個專案後你可以：
 ## License
 
 MIT License — 自由使用、修改、商業化，保留版權聲明即可。
+
+---
+
+## Questions
+
+Open an issue at
+[github.com/Lumeon-Labs/hmi-modbus-template/issues](https://github.com/Lumeon-Labs/hmi-modbus-template/issues).
