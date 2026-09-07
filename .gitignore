@@ -1,0 +1,44 @@
+## .gitignore for .NET / WPF projects
+
+# Build outputs
+bin/
+obj/
+publish/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+.nuget/
+packages/
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# User-specific config
+launchSettings.json
+
+# Rider
+.idea/
+
+# VSCode
+.vscode/
+
+# Local config override (keep sample)
+local.config.json

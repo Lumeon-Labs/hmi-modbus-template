@@ -1,0 +1,103 @@
+<UserControl x:Class="HmiTemplate.UI.Views.RecipeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid Margin="24,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 頁面標題 -->
+        <TextBlock Grid.Row="0"
+                   Text="Recipe Manager" FontSize="22" FontWeight="SemiBold"
+                   Foreground="{StaticResource TextBrush}"
+                   Margin="0,0,0,16"/>
+
+        <!-- Toolbar -->
+        <Border Grid.Row="1"
+                Style="{StaticResource ValueCardStyle}"
+                Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="+ 新增"
+                        Command="{Binding AddRecipeCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Margin="0,0,8,0"/>
+                <Button Content="編輯"
+                        Command="{Binding EditRecipeCommand}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        IsEnabled="{Binding SelectedRecipe, Converter={StaticResource NullToBoolConverter}}"
+                        Margin="0,0,8,0"/>
+                <Button Content="刪除"
+                        Command="{Binding DeleteRecipeCommand}"
+                        Style="{StaticResource DangerButtonStyle}"
+                        IsEnabled="{Binding SelectedRecipe, Converter={StaticResource NullToBoolConverter}}"
+                        Margin="0,0,16,0"/>
+                <Rectangle Width="1" Fill="{StaticResource BorderBrush}" Margin="0,0,16,0"/>
+                <Button Content="套用配方"
+                        Command="{Binding ApplyRecipeCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Background="{StaticResource AccentBrush}"
+                        IsEnabled="{Binding SelectedRecipe, Converter={StaticResource NullToBoolConverter}}"
+                        Margin="0,0,16,0"/>
+                <Rectangle Width="1" Fill="{StaticResource BorderBrush}" Margin="0,0,16,0"/>
+                <Button Content="匯入"
+                        Command="{Binding ImportRecipeCommand}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Margin="0,0,8,0"/>
+                <Button Content="匯出"
+                        Command="{Binding ExportRecipeCommand}"
+                        Style="{StaticResource SecondaryButtonStyle}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- DataGrid -->
+        <Border Grid.Row="2"
+                Style="{StaticResource ValueCardStyle}"
+                Margin="0,0,0,12">
+            <DataGrid ItemsSource="{Binding Recipes}"
+                      SelectedItem="{Binding SelectedRecipe}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True">
+                <DataGrid.InputBindings>
+                    <!-- 雙擊開啟編輯對話框 -->
+                    <MouseBinding MouseAction="LeftDoubleClick"
+                                  Command="{Binding EditRecipeCommand}"/>
+                </DataGrid.InputBindings>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="配方名稱" Binding="{Binding Name}" Width="180"/>
+                    <DataGridTextColumn Header="溫度設定 (°C)"
+                                        Binding="{Binding TemperatureSetpoint, StringFormat={}{0:F1}}"
+                                        Width="130"/>
+                    <DataGridTextColumn Header="轉速設定 (RPM)"
+                                        Binding="{Binding SpeedSetpoint, StringFormat={}{0:F0}}"
+                                        Width="130"/>
+                    <DataGridTextColumn Header="壓力上限 (kPa)"
+                                        Binding="{Binding PressureLimit, StringFormat={}{0:F1}}"
+                                        Width="130"/>
+                    <DataGridTextColumn Header="說明"
+                                        Binding="{Binding Description}"
+                                        Width="*"/>
+                    <DataGridTextColumn Header="建立時間"
+                                        Binding="{Binding CreatedAt, StringFormat={}{0:MM/dd HH:mm}}"
+                                        Width="110"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- 狀態列 -->
+        <Border Grid.Row="3"
+                Style="{StaticResource ValueCardStyle}"
+                Padding="12,8">
+            <TextBlock Text="{Binding StatusMessage}"
+                       Foreground="{StaticResource AccentBrush}"
+                       FontSize="12"/>
+        </Border>
+    </Grid>
+</UserControl>

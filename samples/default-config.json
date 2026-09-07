@@ -1,0 +1,30 @@
+{
+  "connection": {
+    "host": "127.0.0.1",
+    "port": 502,
+    "readIntervalMs": 500
+  },
+  "alarmRules": [
+    {
+      "id": "ALM-001",
+      "description": "高溫警報",
+      "register": "HR0",
+      "threshold": 800,
+      "hysteresis": 820
+    },
+    {
+      "id": "ALM-002",
+      "description": "高壓警報",
+      "register": "HR1",
+      "threshold": 1500,
+      "hysteresis": 1520
+    },
+    {
+      "id": "ALM-003",
+      "description": "高轉速警報",
+      "register": "HR2",
+      "threshold": 2500,
+      "hysteresis": 2550
+    }
+  ]
+}

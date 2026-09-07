@@ -1,0 +1,168 @@
+<UserControl x:Class="HmiTemplate.UI.Views.AlarmView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid Margin="24,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 頁面標題 + 警報計數 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
+            <TextBlock Text="Alarm Management"
+                       FontSize="22" FontWeight="SemiBold"
+                       Foreground="{StaticResource TextBrush}"
+                       VerticalAlignment="Center"/>
+            <Border Background="{StaticResource DangerBrush}"
+                    CornerRadius="10"
+                    Padding="8,2"
+                    Margin="12,0,0,0"
+                    VerticalAlignment="Center">
+                <TextBlock Text="{Binding ActiveAlarmCount}"
+                           FontSize="13" FontWeight="Bold"
+                           Foreground="White"/>
+            </Border>
+        </StackPanel>
+
+        <!-- TabControl -->
+        <TabControl Grid.Row="1">
+
+            <!-- ══════════════════════════════════
+                 Active Alarms Tab
+            ══════════════════════════════════ -->
+            <TabItem Header="Active Alarms">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Toolbar -->
+                    <Border Grid.Row="0"
+                            Style="{StaticResource ValueCardStyle}"
+                            Margin="0,12,0,8">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="確認警報"
+                                    Command="{Binding AcknowledgeAlarmCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    IsEnabled="{Binding SelectedActiveAlarm,
+                                        Converter={StaticResource NullToBoolConverter}}"
+                                    Margin="0,0,8,0"/>
+                            <Button Content="全部確認"
+                                    Command="{Binding AcknowledgeAllCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Active Alarms DataGrid -->
+                    <Border Grid.Row="1" Style="{StaticResource ValueCardStyle}">
+                        <DataGrid ItemsSource="{Binding ActiveAlarms}"
+                                  SelectedItem="{Binding SelectedActiveAlarm}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="警報 ID"
+                                                    Binding="{Binding AlarmId}"
+                                                    Width="100"/>
+                                <DataGridTextColumn Header="訊息"
+                                                    Binding="{Binding Message}"
+                                                    Width="200"/>
+                                <DataGridTextColumn Header="觸發時間"
+                                                    Binding="{Binding TriggeredAt, StringFormat={}{0:HH:mm:ss}}"
+                                                    Width="100"/>
+                                <DataGridTemplateColumn Header="狀態" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="4" Padding="6,2"
+                                                    HorizontalAlignment="Left">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background"
+                                                                Value="{StaticResource DangerBrush}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}"
+                                                                         Value="Acknowledged">
+                                                                <Setter Property="Background"
+                                                                        Value="{StaticResource WarningBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding Status}"
+                                                           Foreground="White"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="確認時間"
+                                                    Binding="{Binding AcknowledgedAt, StringFormat={}{0:HH:mm:ss}}"
+                                                    Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- ══════════════════════════════════
+                 Alarm History Tab
+            ══════════════════════════════════ -->
+            <TabItem Header="Alarm History">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Style="{StaticResource ValueCardStyle}"
+                            Margin="0,12,0,8">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="重新整理"
+                                    Command="{Binding RefreshHistoryCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}"/>
+                            <TextBlock Text="最多顯示 1000 筆記錄"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="12"
+                                       VerticalAlignment="Center"
+                                       Margin="16,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="1" Style="{StaticResource ValueCardStyle}">
+                        <DataGrid ItemsSource="{Binding HistoryAlarms}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="警報 ID"
+                                                    Binding="{Binding AlarmId}"
+                                                    Width="100"/>
+                                <DataGridTextColumn Header="訊息"
+                                                    Binding="{Binding Message}"
+                                                    Width="200"/>
+                                <DataGridTextColumn Header="觸發時間"
+                                                    Binding="{Binding TriggeredAt, StringFormat={}{0:MM/dd HH:mm:ss}}"
+                                                    Width="140"/>
+                                <DataGridTextColumn Header="清除時間"
+                                                    Binding="{Binding ClearedAt, StringFormat={}{0:MM/dd HH:mm:ss}}"
+                                                    Width="140"/>
+                                <DataGridTextColumn Header="持續時間"
+                                                    Binding="{Binding Duration, StringFormat={}{0:hh\\:mm\\:ss}}"
+                                                    Width="100"/>
+                                <DataGridTextColumn Header="狀態"
+                                                    Binding="{Binding Status}"
+                                                    Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

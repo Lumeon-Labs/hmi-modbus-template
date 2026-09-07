@@ -1,0 +1,64 @@
+<UserControl x:Class="HmiTemplate.UI.Views.TrendView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid Margin="24,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 頁面標題 -->
+        <TextBlock Grid.Row="0"
+                   Text="Trend Chart" FontSize="22" FontWeight="SemiBold"
+                   Foreground="{StaticResource TextBrush}"
+                   Margin="0,0,0,16"/>
+
+        <!-- Toolbar -->
+        <Border Grid.Row="1"
+                Style="{StaticResource ValueCardStyle}"
+                Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="{Binding PauseButtonText}"
+                        Command="{Binding TogglePauseCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Width="80"
+                        Margin="0,0,8,0"/>
+                <Button Content="清除"
+                        Command="{Binding ClearDataCommand}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Width="60"
+                        Margin="0,0,8,0"/>
+                <Button Content="匯出 CSV"
+                        Command="{Binding ExportCsvCommand}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Width="80"/>
+                <TextBlock Text=" | "
+                           Foreground="{StaticResource MutedBrush}"
+                           VerticalAlignment="Center"
+                           Margin="12,0"/>
+                <TextBlock Text="顯示最近 5 分鐘趨勢"
+                           Foreground="{StaticResource MutedBrush}"
+                           FontSize="12"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- LiveCharts 趨勢圖 -->
+        <Border Grid.Row="2"
+                Style="{StaticResource ValueCardStyle}">
+            <lvc:CartesianChart
+                Series="{Binding Series}"
+                XAxes="{Binding XAxes}"
+                YAxes="{Binding YAxes}"
+                LegendPosition="Bottom"
+                Background="Transparent"/>
+        </Border>
+    </Grid>
+</UserControl>
