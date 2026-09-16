@@ -8,13 +8,13 @@ namespace HmiTemplate.Tests;
 
 /// <summary>
 /// AlarmEngine 單元測試
-/// 驗證：觸發、Hysteresis 保持、清除、AcknowledgeAlarm
+/// 驗證：觸發、Hysteresis 防抖帶、清除、AcknowledgeAlarm、Hysteresis 設錯的退回行為
 /// </summary>
 public class AlarmEngineTests
 {
-    /// <summary>建立標準測試用 AlarmEngine，含 ALM-001（HR0 > 800 觸發，< 800 清除）</summary>
+    /// <summary>建立標準測試用 AlarmEngine，含 ALM-001（HR0 ≥ 800 觸發，< 780 才清除）</summary>
     private static (AlarmEngine engine, List<AlarmRecord> triggered, List<AlarmRecord> cleared)
-        CreateEngine()
+        CreateEngine(int hysteresis = 780)
     {
         var rules = new List<AlarmRule>
         {
@@ -23,8 +23,8 @@ public class AlarmEngineTests
                 Id = "ALM-001",
                 Description = "高溫警報",
                 Register = "HR0",
-                Threshold = 800,    // 80.0°C
-                Hysteresis = 820    // 82.0°C（需低於 800 才清除；上方範圍為防止重複觸發的容忍帶）
+                Threshold = 800,          // 80.0°C 觸發
+                Hysteresis = hysteresis   // 預設 78.0°C 以下才清除
             }
         };
 
@@ -94,10 +94,10 @@ public class AlarmEngineTests
     }
 
     // ══════════════════════════════════════════════
-    //  Test 3：溫度低於 Threshold（< 800）→ 警報清除
+    //  Test 3：溫度低於 Hysteresis（< 780）→ 警報清除
     // ══════════════════════════════════════════════
     [Fact]
-    public void Temperature_DropsBelow_ShouldClearAlarm()
+    public void Temperature_DropsBelowHysteresis_ShouldClearAlarm()
     {
         var (engine, triggered, cleared) = CreateEngine();
 
@@ -106,8 +106,8 @@ public class AlarmEngineTests
         Thread.Sleep(100);
         triggered.Should().HaveCount(1);
 
-        // 溫度降回 79°C（raw = 790 < 800 → 清除）
-        engine.Update(MakeData(79.0));
+        // 溫度降到 77.9°C（raw = 779 < 780 → 清除）
+        engine.Update(MakeData(77.9));
         Thread.Sleep(100);
 
         cleared.Should().HaveCount(1);
@@ -136,6 +136,52 @@ public class AlarmEngineTests
         engine.ActiveAlarms.Should().HaveCount(1);
         engine.ActiveAlarms[0].Status.Should().Be(AlarmStatus.Acknowledged);
         engine.ActiveAlarms[0].AcknowledgedAt.Should().NotBeNull();
+    }
+
+    // ══════════════════════════════════════════════
+    //  Test 6：降到 Threshold 以下、但仍在防抖帶內（780 ≤ raw < 800）→ 不清除
+    //  這就是 Hysteresis 存在的理由：邊界附近來回不會觸發/清除抖動
+    // ══════════════════════════════════════════════
+    [Fact]
+    public void Temperature_InsideHysteresisBand_ShouldKeepAlarm()
+    {
+        var (engine, triggered, cleared) = CreateEngine();
+
+        engine.Update(MakeData(80.5));   // 805 → 觸發
+        Thread.Sleep(100);
+        triggered.Should().HaveCount(1);
+
+        engine.Update(MakeData(79.0));   // 790：低於 800 但未低於 780 → 保持
+        engine.Update(MakeData(79.9));   // 799：同上
+        engine.Update(MakeData(78.0));   // 780：等於 Hysteresis，仍未「低於」→ 保持
+        Thread.Sleep(100);
+
+        cleared.Should().BeEmpty("在防抖帶內不應清除");
+        engine.ActiveAlarms.Should().HaveCount(1);
+        triggered.Should().HaveCount(1, "帶內來回也不應重複觸發");
+
+        engine.Update(MakeData(77.9));   // 779 < 780 → 清除
+        Thread.Sleep(100);
+        cleared.Should().HaveCount(1);
+        engine.ActiveAlarms.Should().BeEmpty();
+    }
+
+    // ══════════════════════════════════════════════
+    //  Test 7：Hysteresis 設錯（≥ Threshold）→ 退回用 Threshold 清除，不會卡死
+    // ══════════════════════════════════════════════
+    [Fact]
+    public void MisconfiguredHysteresis_ShouldFallBackToThreshold()
+    {
+        var (engine, triggered, cleared) = CreateEngine(hysteresis: 820);
+
+        engine.Update(MakeData(81.0));   // 810 → 觸發
+        Thread.Sleep(100);
+        triggered.Should().HaveCount(1);
+
+        engine.Update(MakeData(79.9));   // 799 < 800（Threshold）→ 清除
+        Thread.Sleep(100);
+        cleared.Should().HaveCount(1);
+        engine.ActiveAlarms.Should().BeEmpty();
     }
 
     // ══════════════════════════════════════════════

@@ -21,8 +21,9 @@ public class AlarmRule
     public int Threshold { get; set; }
 
     /// <summary>
-    /// Hysteresis 清除閾值，必須低於此值才清除警報
-    /// 避免在邊界值附近抖動
+    /// Hysteresis 清除閾值（原始暫存器值），必須低於 Threshold。
+    /// 觸發後要降到此值以下才清除；Threshold 與此值之間是防抖帶。
+    /// 例：Threshold 800 / Hysteresis 780 → 80.0°C 觸發、降到 78.0°C 以下才清除
     /// </summary>
     public int Hysteresis { get; set; }
 

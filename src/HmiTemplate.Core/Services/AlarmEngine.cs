@@ -23,6 +23,9 @@ public class AlarmEngine
     private readonly List<AlarmRecord> _activeAlarms = [];
     private readonly object _lock = new();
 
+    // Hysteresis 設錯的規則只警告一次，避免每 500ms 洗版
+    private readonly HashSet<string> _hysteresisWarned = [];
+
     /// <summary>新警報觸發時通知</summary>
     public event Action<AlarmRecord>? AlarmTriggered;
 
@@ -67,8 +70,9 @@ public class AlarmEngine
                 }
                 else
                 {
-                    // 已觸發 → 判斷是否低於 Hysteresis 值（才能清除）
-                    if (rawValue < rule.Threshold)
+                    // 已觸發 → 要降到清除閾值（Hysteresis）以下才清除。
+                    // Threshold 與 Hysteresis 之間是不動作的防抖帶
+                    if (rawValue < GetClearLevel(rule))
                     {
                         ClearAlarm(rule, data.Timestamp);
                     }
@@ -142,6 +146,23 @@ public class AlarmEngine
             rule.Id, record.Duration?.ToString(@"hh\:mm\:ss") ?? "N/A");
 
         Task.Run(() => AlarmCleared?.Invoke(record));
+    }
+
+    /// <summary>
+    /// 取得清除閾值。Hysteresis 必須落在 (0, Threshold) 才構成防抖帶；
+    /// 設錯（≥ Threshold 或 ≤ 0）就退回用 Threshold 清除，並只警告一次
+    /// </summary>
+    private int GetClearLevel(AlarmRule rule)
+    {
+        if (rule.Hysteresis > 0 && rule.Hysteresis < rule.Threshold)
+            return rule.Hysteresis;
+
+        if (_hysteresisWarned.Add(rule.Id))
+        {
+            Log.Warning("規則 {Id} 的 Hysteresis={Hyst} 未低於 Threshold={Thr}，改用 Threshold 清除",
+                rule.Id, rule.Hysteresis, rule.Threshold);
+        }
+        return rule.Threshold;
     }
 
     /// <summary>

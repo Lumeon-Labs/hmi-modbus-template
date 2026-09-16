@@ -80,24 +80,24 @@ public class ConfigStore
                 Id = "ALM-001",
                 Description = "高溫警報",
                 Register = "HR0",
-                Threshold = 800,      // 80.0°C
-                Hysteresis = 820      // 清除閾值：82.0°C（需降至此以下才解除）
+                Threshold = 800,      // 80.0°C 觸發
+                Hysteresis = 780      // 降到 78.0°C 以下才清除（防抖帶 2°C）
             },
             new AlarmRule
             {
                 Id = "ALM-002",
                 Description = "高壓警報",
                 Register = "HR1",
-                Threshold = 1500,     // 150.0 kPa
-                Hysteresis = 1520     // 152.0 kPa
+                Threshold = 1500,     // 150.0 kPa 觸發
+                Hysteresis = 1480     // 148.0 kPa 以下才清除
             },
             new AlarmRule
             {
                 Id = "ALM-003",
                 Description = "高轉速警報",
                 Register = "HR2",
-                Threshold = 2500,     // 2500 RPM
-                Hysteresis = 2550     // 2550 RPM
+                Threshold = 2500,     // 2500 RPM 觸發
+                Hysteresis = 2450     // 2450 RPM 以下才清除
             }
         ]
     };

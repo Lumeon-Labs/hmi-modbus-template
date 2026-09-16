@@ -58,5 +58,5 @@ Subscribers of DataReceived:
 
 1. **Built-in Slave**: No external PLC/simulator needed — the app hosts its own Modbus TCP server on Port 502.
 2. **Auto-reconnect**: Master polls every 500ms. On failure → 5s backoff → retry indefinitely.
-3. **Hysteresis alarms**: Trigger at threshold, clear only below threshold (prevents chattering at boundary values).
+3. **Hysteresis alarms**: Trigger at `threshold`, clear only when the value drops below `hysteresis` (a band under the threshold), so a value hovering at the boundary does not chatter. A misconfigured `hysteresis` (not below `threshold`) falls back to clearing at `threshold` and is logged once.
 4. **Thread safety**: `TrendBuffer` and `AlarmHistory` use `lock`. UI updates via `Dispatcher.Invoke`.

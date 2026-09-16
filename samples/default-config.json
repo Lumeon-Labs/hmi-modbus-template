@@ -10,21 +10,21 @@
       "description": "高溫警報",
       "register": "HR0",
       "threshold": 800,
-      "hysteresis": 820
+      "hysteresis": 780
     },
     {
       "id": "ALM-002",
       "description": "高壓警報",
       "register": "HR1",
       "threshold": 1500,
-      "hysteresis": 1520
+      "hysteresis": 1480
     },
     {
       "id": "ALM-003",
       "description": "高轉速警報",
       "register": "HR2",
       "threshold": 2500,
-      "hysteresis": 2550
+      "hysteresis": 2450
     }
   ]
 }
