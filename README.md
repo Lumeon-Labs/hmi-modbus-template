@@ -8,7 +8,15 @@
 
 ## Screenshots
 
-<!-- TODO(Mars): add screenshots -->
+| Dashboard | Trend |
+|---|---|
+| ![Dashboard](docs/screenshots/01-dashboard.png) | ![Trend](docs/screenshots/02-trend.png) |
+| 即時數值卡片、趨勢箭頭、設備狀態 LED | LiveCharts 最近 5 分鐘趨勢，轉速走右 Y 軸 |
+
+| Alarm | Recipe |
+|---|---|
+| ![Alarm](docs/screenshots/04-alarm.png) | ![Recipe](docs/screenshots/03-recipe.png) |
+| Active → Acknowledged → Cleared 狀態流（截圖時把 `config.json` 的高溫閾值降到 27.0°C，讓模擬器的 25 ± 5°C 正弦波真的觸發） | 配方 CRUD，套用後寫入 HR4 / HR5 / HR6 |
 
 ---
 
