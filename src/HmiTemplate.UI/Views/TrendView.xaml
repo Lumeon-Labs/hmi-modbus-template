@@ -58,6 +58,8 @@
                 XAxes="{Binding XAxes}"
                 YAxes="{Binding YAxes}"
                 LegendPosition="Bottom"
+                LegendTextPaint="{Binding LegendTextPaint}"
+                TooltipTextPaint="{Binding TooltipTextPaint}"
                 Background="Transparent"/>
         </Border>
     </Grid>

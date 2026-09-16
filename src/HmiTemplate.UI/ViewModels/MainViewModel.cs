@@ -47,23 +47,28 @@ public partial class MainViewModel : ObservableObject
         // 預設顯示 Dashboard
         CurrentView = DashboardVm;
 
-        // 監聽連線狀態變化
+        // 監聽連線狀態變化。Master 在 App 啟動時就已連線（早於本 VM 建立），
+        // 所以訂閱後要先同步一次目前狀態，否則 header 會一直停在「連線中...」
         _master.StatusChanged += OnConnectionStatusChanged;
+        ApplyStatus(_master.Status);
     }
 
     private void OnConnectionStatusChanged(ConnectionStatus status)
     {
-        App.Current.Dispatcher.Invoke(() =>
+        App.Current.Dispatcher.Invoke(() => ApplyStatus(status));
+    }
+
+    /// <summary>把連線狀態映射成 header 的文字與顏色</summary>
+    private void ApplyStatus(ConnectionStatus status)
+    {
+        (ConnectionStatusText, ConnectionStatusColor) = status switch
         {
-            (ConnectionStatusText, ConnectionStatusColor) = status switch
-            {
-                ConnectionStatus.Connected    => ("已連線", "#22C55E"),
-                ConnectionStatus.Connecting   => ("連線中...", "#F59E0B"),
-                ConnectionStatus.Disconnected => ("未連線", "#6B7280"),
-                ConnectionStatus.Error        => ("連線錯誤", "#EF4444"),
-                _ => ("未知", "#6B7280")
-            };
-        });
+            ConnectionStatus.Connected    => ("已連線", "#22C55E"),
+            ConnectionStatus.Connecting   => ("連線中...", "#F59E0B"),
+            ConnectionStatus.Disconnected => ("未連線", "#6B7280"),
+            ConnectionStatus.Error        => ("連線錯誤", "#EF4444"),
+            _ => ("未知", "#6B7280")
+        };
     }
 
     [RelayCommand]

@@ -42,10 +42,21 @@ public partial class TrendViewModel : ObservableObject
     public Axis[] XAxes { get; }
     public Axis[] YAxes { get; }
 
+    /// <summary>
+    /// 圖例與 tooltip 的文字畫筆。SkiaSharp 預設字型沒有 CJK 字形，
+    /// 中文序列名稱會畫成方框，所以向系統要一個含「溫」字形的字型。
+    /// </summary>
+    public SolidColorPaint LegendTextPaint { get; }
+    public SolidColorPaint TooltipTextPaint { get; }
+
     public TrendViewModel(ModbusMasterService master, TrendBuffer buffer)
     {
         _master = master;
         _buffer = buffer;
+
+        var cjkTypeface = SKFontManager.Default.MatchCharacter('溫') ?? SKTypeface.Default;
+        LegendTextPaint = new SolidColorPaint(SKColor.Parse("#9CA3AF")) { SKTypeface = cjkTypeface };
+        TooltipTextPaint = new SolidColorPaint(SKColor.Parse("#1F2937")) { SKTypeface = cjkTypeface };
 
         // 定義 4 條趨勢線
         Series =

@@ -76,6 +76,13 @@ public partial class App : Application
             master.SetReadInterval(conn.ReadIntervalMs);
             Log.Information("Modbus Master 就緒");
 
+            // Step 4b：把每一筆讀值餵給警報引擎。這裡才解析 AlarmEngine，
+            // 確保它拿到的是 LoadAsync 之後的規則清單，而不是空的預設值
+            var alarmEngine = sp.GetRequiredService<AlarmEngine>();
+            master.DataReceived += alarmEngine.Update;
+            Log.Information("AlarmEngine 已接上 Master 資料流（{Count} 條規則）",
+                configStore.Config.AlarmRules.Count);
+
             // Step 5：在 UI 執行緒顯示主視窗
             await Dispatcher.InvokeAsync(() =>
             {
