@@ -132,6 +132,8 @@
                             <RowDefinition Height="28"/>
                             <RowDefinition Height="28"/>
                             <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="28"/>
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0"
@@ -158,6 +160,16 @@
                         <TextBlock Grid.Row="3" Grid.Column="1"
                                    Text="{Binding ConnectionStatus}"
                                    FontFamily="Consolas"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0"
+                                   Text="作者" Foreground="{StaticResource MutedBrush}"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1"
+                                   Text="Mars ・ mars-industrial.pages.dev"/>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0"
+                                   Text="付費客製" Foreground="{StaticResource MutedBrush}"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1"
+                                   Text="LINE 官方帳號 @935pczdn ・ NT$2,500／小時"/>
                     </Grid>
                 </StackPanel>
             </Border>

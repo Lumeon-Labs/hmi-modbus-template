@@ -96,7 +96,7 @@ dotnet build -c Release
 ```bash
 dotnet test
 ```
-目前共 5 個 xUnit 測試，全數通過。
+目前共 7 個 xUnit 測試，全數通過。
 
 **Publish single .exe:**
 ```bash

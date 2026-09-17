@@ -108,10 +108,15 @@
                     BorderThickness="0,0,1,0">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Bottom"
-                               Text="v1.0.0 · Built by Mars"
+                               Text="客製：mars-industrial.pages.dev"
                                FontSize="10"
                                Foreground="{StaticResource MutedBrush}"
                                Margin="16,0,0,12"/>
+                    <TextBlock DockPanel.Dock="Bottom"
+                               Text="v1.0.0 · Built by Mars"
+                               FontSize="10"
+                               Foreground="{StaticResource MutedBrush}"
+                               Margin="16,0,0,2"/>
 
                     <StackPanel Margin="8,12">
                         <TextBlock Text="NAVIGATION"
