@@ -121,6 +121,17 @@ Fork 這個專案後你可以：
 
 ---
 
+## 要改成你的設備？
+
+Fork 回去自己改完全沒問題（MIT）。想省時間的話，我接付費客製：
+
+- 換成你的 PLC 或儀表（Modbus TCP／RTU、三菱 MC Protocol）、加製程變數、改畫面、接資料庫或 Excel 報表
+- 時計 NT$2,500／小時（2 小時起、遠端），或專案報價
+
+聯絡：<https://mars-industrial.pages.dev/#contact> ・ LINE 官方帳號 [@935pczdn](https://line.me/R/ti/p/@935pczdn)
+
+---
+
 ## 作者
 
 **Built by Mars**
